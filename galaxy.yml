@@ -1,0 +1,30 @@
+---
+namespace: bluepantsdev
+name: raspberrypi
+version: "0.0.1"
+readme: README.md
+
+authors:
+  - bluepantsdev
+
+description: Collection of RaspberryPi roles for Ansible.
+
+# Either a single license or a list of licenses for content inside of a collection. Ansible Galaxy currently only
+# accepts L(SPDX,https://spdx.org/licenses/) licenses. This key is mutually exclusive with 'license_file'
+license:
+  - MIT
+
+# A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
+# requirements as 'namespace' and 'name'
+tags:
+  - linux
+
+dependencies:
+  community.general: ">=3.0.0"
+
+repository: https://github.com/bluepantsdev/collection-raspberrypi.git
+documentation: https://github.com/bluepantsdev/collection-raspberrypi.git
+homepage: https://bluepants.dev
+issues: https://github.com/bluepantsdev/collection-raspberrypi/issues
+
+build_ignore: []

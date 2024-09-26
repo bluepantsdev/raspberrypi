@@ -1,0 +1,10 @@
+## rpi-update playbook/defaults
+---
+# The upgrade mode to use. See https://docs.ansible.com/ansible/latest/modules/apt_module.html for available options.
+apt_upgrade: "dist"
+
+## timestamp
+write_date: "{{ lookup('pipe', 'date +%Y-%m-%d@%H:%M') }}"
+
+## string search
+reboot_notice: 'A reboot is needed to activate the new firmware'

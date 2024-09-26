@@ -1,0 +1,14 @@
+---
+- name: Update apt system
+  when: update_sys_enabled is true
+  notify: apt reboot needed
+  block:
+    - name: Update package cache & dist-upgrade packages
+      ansible.builtin.apt:
+        upgrade: "{{ apt_upgrade }}"
+        update_cache: true
+        cache_valid_time: 3600
+        force_apt_get: true
+        autoclean: true
+        autoremove: true
+

@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+
+  vars:
+    update_sys_enabled: true
+    apt_upgrade: dist
+
+  # refernces this role based on `meta.yml` configuration
+  roles:
+    - role: bluepants-dev.update_sys
