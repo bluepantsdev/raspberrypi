@@ -33,6 +33,6 @@ jobs:
           # Path to the collection
           collection_dir: './'
           # Build the collection
-          build: true
+          build: false
           # Publish the collection
-          publish: true
+          publish: false
