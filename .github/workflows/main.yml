@@ -16,7 +16,9 @@ jobs:
         with:
           # Galaxy API key to use
           api_key: ${{ secrets.GALAXY_API_KEY }}
-          # Galaxy API server to use, default being `https://galaxy.ansible.com`
-          api_server: # optional, default is https://galaxy.ansible.com/
-          # Specific path to collection, default being `.`
-          src_path: ./
+          # Path to the collection
+          collection_dir: .
+          # Build the collection
+          build: true
+          # Publish the collection
+          publish: true
