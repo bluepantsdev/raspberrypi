@@ -9,6 +9,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Get the version name from the tags
+        run: echo "RELEASE_VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+
       - name: Ansible Publish
         # You may pin to the exact commit or the version.
         # uses: ansible/ansible-publish-action@a56a0328c92c1d4feedf5bd7f7cf7ec7a4ae3f09
@@ -16,8 +19,10 @@ jobs:
         with:
           # Galaxy API key to use
           api_key: ${{ secrets.GALAXY_API_KEY }}
+          # Pass galaxy Version
+          galaxy_version: '${{ env.RELEASE_VERSION }}'
           # Path to the collection
-          collection_dir: .
+          collection_dir: './'
           # Build the collection
           build: true
           # Publish the collection
