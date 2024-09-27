@@ -21,6 +21,8 @@ jobs:
           api_key: ${{ secrets.GALAXY_API_KEY }}
           # Pass galaxy Version
           galaxy_version: '${{ env.RELEASE_VERSION }}'
+          # galaxy file location
+          galaxy_config_file: './galaxy.yml'  # Update this path to the correct location
           # Path to the collection
           collection_dir: './'
           # Build the collection
