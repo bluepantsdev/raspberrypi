@@ -1,0 +1,45 @@
+---
+# tasks file for NEO5_NVMe
+
+## Check if the host is a Raspberry Pi
+- name: Read /proc/cpuinfo
+  ansible.builtin.command: cat /proc/cpuinfo
+  register: cpuinfo
+  changed_when: false
+  tags:
+    - always
+
+- name: Set fact if host is a Raspberry Pi
+  ansible.builtin.set_fact:
+    is_raspberry_pi: "{{ 'Raspberry Pi' in cpuinfo.stdout }}"
+  changed_when: false
+  tags:
+    - always
+
+## Check that we are Raspbian
+- name: Read /etc/os-release
+  ansible.builtin.command: cat /etc/os-release
+  register: os_release
+  changed_when: false
+  tags:
+    - always
+
+## Print vars if tag = debug
+- name: Print Platform
+  ansible.builtin.debug:
+    msg: "is raspberry_pi: {{ is_raspberry_pi }}"
+  tags:
+    - always
+
+## Run eeprom playbook
+- name: Run EEPROM playbook
+  ansible.builtin.include_tasks: eeprom.yml
+  when: "'ID=debian' in os_release.stdout and is_raspberry_pi"
+  # vars:
+  #   ARGONDOWNLOADSERVER: "{{ download_server }}"
+  #   eepromrpiscript: "{{ eeprom_script_download_path }}"
+  #   eepromconfigscript: "/tmp/argon-rpi-eeprom-config-default.py"
+
+- name: Run config playbook
+  ansible.builtin.include_tasks: config.yml
+  when: "'ID=debian' in os_release.stdout and is_raspberry_pi"

@@ -1,0 +1,32 @@
+---
+
+## Check for the presence of the config.txt file
+- name: Check if /boot/firmware/config.txt is present
+  ansible.builtin.stat:
+    path: /boot/firmware/config.txt
+  register: configtxt_path
+
+- name: Print configtxt_path
+  ansible.builtin.debug:
+    var: configtxt_path.stat.path
+
+- name: Add USB max current setting to config.txt
+  ansible.builtin.lineinfile:
+    line: usb_max_current_enable=1
+    path: "{{ configtxt_path.stat.path }}"
+  when: configtxt_path.stat.exists
+  notify: Reboot system
+
+- name: Add NVMe PCIe settings to config.txt
+  ansible.builtin.lineinfile:
+    line: dtparam=nvme
+    path: "{{ configtxt_path.stat.path }}"
+  when: configtxt_path.stat.exists
+  notify: Reboot system
+
+- name: Add NVMe PCIe Params to config.txt
+  ansible.builtin.lineinfile:
+    line: dtparam=pciex1_1=gen3
+    path: "{{ configtxt_path.stat.path }}"
+  when: configtxt_path.stat.exists
+  notify: Reboot system

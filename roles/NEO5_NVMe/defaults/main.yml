@@ -1,0 +1,27 @@
+---
+# defaults file for NEO5_NVMe
+download_server: "https://download.argon40.com"
+eeprom_script_download_path: "{{ download_server }}/argon-eeprom.sh"
+eeprom_config_script_download_path: "{{ download_server }}/scripts/argon-rpi-eeprom-config-default.py"
+eepromconfigscript: "/dev/shm/argon-eeprom.py"
+eepromrpiscript: "/usr/bin/rpi-eeprom-config"
+
+control_script_download_path: "{{ download_server }}/argonneo5.sh"
+
+## the scripts configurethe EEPROM config and the config.txt files
+
+## Power settings for teh EEPROM
+#BOOT_UART=1
+#WAKE_N_GPIO=0
+#POWER_OFF_ON HALT=1
+
+## Power settings for the config.xt
+#usb_max_current_enable=1
+
+## MVNme PCIe settings EEPROM
+#BOOT_ODER=0xf416
+#PCIE_PROBE=1
+
+## NVMe PCIe settings config.txt
+#dtparam=nvme
+#dtparam=pciex1_1=gen3
