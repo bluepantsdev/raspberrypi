@@ -1,4 +1,4 @@
-NEO5 NVMe
+neo5_nvme
 =========
 
 Installs the NEO5 NVMe driver for Raspberry Pi.
@@ -24,9 +24,9 @@ Example Playbook
 In the group or host vars file, set the variable `enable_neo5_nvme` to `true` to enable the role. Call the role as a task in the playbook as shown below:
 
 ```yaml
-    - name: Run role NEO5_NVMe, if enabled
+    - name: Run role neo5_nvme, if enabled
       ansible.builtin.include_role:
-        name: NEO5_NVMe
+        name: neo5_nvme
       when: enable_neo5_nvme | default(false)
 ```
 
