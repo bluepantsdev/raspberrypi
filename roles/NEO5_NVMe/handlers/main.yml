@@ -1,0 +1,10 @@
+---
+# handlers file for NEO5_NVMe
+- name: Reboot system
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+  async: 1
+  poll: 0
+  ignore_errors: true
+  tags:
+    - always

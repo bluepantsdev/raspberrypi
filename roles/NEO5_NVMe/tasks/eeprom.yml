@@ -1,0 +1,63 @@
+---
+
+# We get called if we are on Raspbian
+
+- name: Check for the EEPROM settings
+  ansible.builtin.command: "{{ eepromrpiscript }}"
+  become: true
+  changed_when: False
+  register: eepromsettings
+
+- name: Check for BOOT_UART in EEPROM settings
+  ansible.builtin.set_fact:
+    boot_uart_present: "{{ 'BOOT_UART=1' in eepromsettings.stdout }}"
+
+- name: Check for POWER_OFF_ON_HALT in EEPROM settings
+  ansible.builtin.set_fact:
+    power_off_on_halt_present: "{{ 'POWER_OFF_ON_HALT=1' in eepromsettings.stdout }}"
+
+- name: Check for BOOT_ORDER in EEPROM settings
+  ansible.builtin.set_fact:
+    boot_order_present: "{{ 'BOOT_ORDER=0xf416' in eepromsettings.stdout }}"
+
+- name: Check for WAKE_ON_GPIO in EEPROM settings
+  ansible.builtin.set_fact:
+    wake_on_gpio_present: "{{ 'WAKE_ON_GPIO=0' in eepromsettings.stdout }}"
+
+- name: Check for PCIE_PROBE in EEPROM settings
+  ansible.builtin.set_fact:
+    pcie_probe_present: "{{ 'PCIE_PROBE=1' in eepromsettings.stdout }}"
+
+- name: Ensure all EEPROM settings are present
+  ansible.builtin.debug:
+    msg: "All required EEPROM settings are present."
+  when: boot_uart_present and power_off_on_halt_present and boot_order_present and wake_on_gpio_present and pcie_probe_present
+
+- name: Warn if any EEPROM setting is missing
+  ansible.builtin.debug:
+    msg: "One or more required EEPROM settings are missing."
+  when: not (boot_uart_present and power_off_on_halt_present and boot_order_present and wake_on_gpio_present and pcie_probe_present)
+
+## TODO: check the version of the EEPROM and only run the script if it is outdated
+## If the EEPROM config script is missing, copy it to the system
+- name: Check if EEPROM config script is present
+  ansible.builtin.stat:
+    path: "{{ eepromconfigscript }}"
+  register: eepromconfigscript_stat
+
+- name: Download EEPROM config script
+  ansible.builtin.get_url:
+    url: "{{ download_server }}/scripts/argon-rpi-eeprom-config-default.py"
+    dest: "{{ eepromconfigscript }}"
+    mode: '0755'
+  become: true
+  when:
+    - eepromconfigscript_stat.stat.exists == False
+    - not (boot_uart_present and power_off_on_halt_present and boot_order_present and wake_on_gpio_present and pcie_probe_present)
+
+## Run the EEPROM config script
+- name: Running EEPROM config script
+  ansible.builtin.command: "{{ eepromconfigscript }}"
+  become: true
+  when: not (boot_uart_present and power_off_on_halt_present and boot_order_present and wake_on_gpio_present and pcie_probe_present)
+  notify: Reboot system
