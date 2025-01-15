@@ -1,0 +1,40 @@
+---
+# tasks file for wifi
+- name: Check if /proc/device-tree/model exists
+  stat:
+    path: /proc/device-tree/model
+  register: model_file
+
+- name: Read /proc/device-tree/model
+  slurp:
+    path: /proc/device-tree/model
+  register: model_output
+  when: model_file.stat.exists
+
+- name: Set is_raspi fact
+  set_fact:
+    is_raspi: "{{ 'Raspberry Pi' in (model_output.content | b64decode) }}"
+
+- name: Gather network interface facts
+  ansible.builtin.setup:
+    filter: ansible_interfaces
+  when: is_raspi
+
+- name: Check if WiFi interface exists
+  set_fact:
+    has_wifi: "{{ 'wlan0' in ansible_interfaces }}"
+  when: is_raspi
+
+- name: Get current WiFi country
+  command: raspi-config nonint get_wifi_country
+  register: current_wifi_country
+  when: is_raspi and has_wifi
+
+- name: Print current WiFi country
+  debug:
+    msg: "Current WiFi country is {{ current_wifi_country.stdout }}"
+  when: current_wifi_country.stdout is defined and is_raspi
+
+- name: Set WiFi country
+  command: raspi-config nonint do_wifi_country {{ wifi_country }}
+  when: is_raspi and has_wifi and current_wifi_country is defined and (current_wifi_country.stdout == '' or current_wifi_country.stdout is none or current_wifi_country.stdout != wifi_country)
