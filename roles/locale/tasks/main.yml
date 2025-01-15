@@ -1,0 +1,33 @@
+---
+- name: Check if /proc/device-tree/model exists
+  stat:
+    path: /proc/device-tree/model
+  register: model_file
+
+- name: Read /proc/device-tree/model
+  slurp:
+    path: /proc/device-tree/model
+  register: model_output
+  when: model_file.stat.exists
+
+- name: Set is_raspi fact
+  set_fact:
+    is_raspi: "{{ 'Raspberry Pi' in (model_output.content | b64decode) }}"
+
+- name: Read /etc/default/locale
+  slurp:
+    path: /etc/default/locale
+  register: locale_file
+
+- name: Extract LANG value from /etc/default/locale
+  set_fact:
+    current_lang: "{{ (locale_file.content | b64decode).split('\n') | select('search', '^LANG=') | list | first | regex_replace('^LANG=', '') }}"
+  when: locale_file is defined
+
+- name: Print current LANG
+  debug:
+    msg: "Current LANG is {{ current_lang }}"
+
+- name: Set Raspberry Pi localization to {{ LOCALE }}
+  command: raspi-config nonint do_change_locale {{ LOCALE }}
+  when: LOCALE is defined and is_raspi and current_lang != LOCALE
